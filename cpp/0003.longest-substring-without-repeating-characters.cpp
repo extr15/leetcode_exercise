@@ -30,3 +30,28 @@ class Solution {
     return max_sub_len;
   }
 };
+
+class Solution {
+ public:
+  int lengthOfLongestSubstring(string s) {
+    unordered_map<int, int> char_idx; // unordered_map<char, idx>;
+    int i=0, j=0;
+    int max_sub_len = 0;
+    while(j < s.length()) {
+      if(char_idx.find(s[j]) == char_idx.end()) {
+        char_idx.insert({s[j], j});
+      }
+      else {
+        for(int k=i; k<char_idx[s[j]];k++) {
+          char_idx.erase(s[k]);
+        }
+        i = char_idx[s[j]]+1;
+        char_idx[s[j]] = j;
+      }
+      j++;
+      max_sub_len = max(max_sub_len, j-i);
+    }
+    return max_sub_len;
+  }
+};
+
