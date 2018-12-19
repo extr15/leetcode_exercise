@@ -1,3 +1,5 @@
+
+// AC
 double findMedianSortedArrays(const vector<int>& nums1, const vector<int>& nums2) {
   const int l1 = nums1.size();
   const int l2 = nums2.size();
@@ -37,7 +39,7 @@ int findKth(const vector<int>::const_iterator& b1, const vector<int>::const_iter
   }
 }
 
-///
+// AC
 
 double findMedianSortedArrays(vector<int>& nums1, vector<int>& nums2) {
   int l1 = nums1.size();
@@ -81,3 +83,43 @@ double findMedianSortedArrays(vector<int>& nums1, vector<int>& nums2) {
   }
 }
 
+// AC
+double findMedianSortedArrays(vector<int>& a, vector<int>& b) {
+  if (a.size() > b.size()) {
+    swap(a, b);
+  }
+  const int m = a.size();
+  const int n = b.size();
+  int left = 0, right = m + 1;
+  const int half_len = (1 + m + n) / 2;
+  while (left <= right) {
+    int mid = (left + right) / 2;
+    int k = half_len - mid;
+    if (mid > 0 && a[mid - 1] > b[k]) {
+      right = mid - 1;
+    } else if (mid < m && a[mid] < b[k - 1]) {
+      left = mid + 1;
+    } else {
+      int max_left;
+      if (mid == 0) {
+        max_left = b[k - 1];
+      } else if (k == 0) {
+        max_left = a[mid - 1];
+      } else {
+        max_left = max(a[mid - 1], b[k - 1]);
+      }
+      if ((m + n) % 2 != 0) {
+        return max_left;
+      }
+      int min_right;
+      if (mid == m) {
+        min_right = b[k];
+      } else if (k == n) {
+        min_right = a[mid];
+      } else {
+        min_right = min(a[mid], b[k]);
+      }
+      return (max_left + min_right) / 2.0;
+    }
+  }
+}

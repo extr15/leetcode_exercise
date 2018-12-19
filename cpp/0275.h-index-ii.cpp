@@ -7,10 +7,6 @@ class Solution {
     }
     int left = 0, right = std::min(n, citations[n - 1]);
     while (left < right) {
-//      int mid = (left + right) / 2;
-//      if(mid == left) {
-//        mid = left+1;
-//      }
       int mid = (left + right+1) / 2;
       if (citations[n-mid] >  mid) {
         left = mid;
