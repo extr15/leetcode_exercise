@@ -1,3 +1,4 @@
+#include <deque>
 #include <iostream>
 #include <map>
 #include <unordered_map>
@@ -102,17 +103,20 @@ class Solution2 {
       if (right_candidate_valid) {
         candidate_pos_to_cnt[cur_right]++;
       }
-      pos_to_candidate_valid[cur_pos] = pair<bool, bool>(left_candidate_valid, right_candidate_valid);
+      pos_to_candidate_valid[cur_pos] =
+          pair<bool, bool>(left_candidate_valid, right_candidate_valid);
     }
     return -1;
   }
 };
 
-class Solution {
+// AC. map.
+class Solution3 {
  public:
   int kEmptySlots(vector<int>& flowers, int k) {
     const int n = flowers.size();
     vector<bool> bloom(n, false);
+    // map<segment_first, segment_last>
     map<int, int> candidate_segment;
     candidate_segment.insert({0, n - 1});
     for (int day = 0; day < n; day++) {
@@ -121,8 +125,8 @@ class Solution {
       }
       int cur_pos = flowers[day] - 1;
       bloom[cur_pos] = true;
-      //cout << "day: " << day << ", cur_pos: "  << cur_pos << endl; 
-      //auto lb = candidate_segment.lower_bound(cur_pos);
+      // cout << "day: " << day << ", cur_pos: "  << cur_pos << endl;
+      // auto lb = candidate_segment.lower_bound(cur_pos);
       auto ub = candidate_segment.upper_bound(cur_pos);
       // otherwise maybe segment fault.
       if (ub == candidate_segment.begin()) {
@@ -130,13 +134,14 @@ class Solution {
       }
       ub--;
       if (ub == candidate_segment.end() || ub->second < cur_pos) {
-        //cout << "d1" << endl;
+        // cout << "d1" << endl;
         continue;
       }
       int left = ub->first, right = ub->second;
       candidate_segment.erase(left);
-      //cout << "day: " << day << ", cur_pos: "  << cur_pos << ", left: " << left << ", right: " << right << endl;
-      if( (left != 0 && cur_pos - left == k) || (right != n-1 && right - cur_pos == k)) {
+      // cout << "day: " << day << ", cur_pos: "  << cur_pos << ", left: " << left << ", right: " <<
+      // right << endl;
+      if ((left != 0 && cur_pos - left == k) || (right != n - 1 && right - cur_pos == k)) {
         return day + 1;
       }
       if (cur_pos - left > k) {
@@ -153,13 +158,75 @@ class Solution {
   }
 };
 
+// AC. MinQueue.
+class Solution {
+ public:
+  struct Elem {
+    Elem(int v, int i) : val(v), idx(i){};
+    int val;
+    int idx;
+  };
+  // minimun is the first.
+  template <typename T>
+  class MinQueue {
+   public:
+    void push(const T& v) {
+      while (!data.empty() && data.back().val >= v.val) {
+        data.pop_back();
+      }
+      data.push_back(v);
+    }
+    void pop(int idx_threshold) {
+      while (!data.empty() && data.front().idx <= idx_threshold) {
+        data.pop_front();
+      }
+    }
+    const T& min() const { return data.front(); }
+    bool empty() const { return data.empty(); }
+
+   private:
+    deque<T> data;
+  };
+  int kEmptySlots(vector<int>& flowers, int k) {
+    const int n = flowers.size();
+    vector<int> days(n);
+    for (int i = 0; i < n; i++) {
+      days[flowers[i] - 1] = i;
+    }
+    MinQueue<Elem> mq;
+    for (int i = 1; i <= k; i++) {
+      mq.push(Elem(days[i], i));
+    }
+    int min_day = n;
+    for (int j = k + 1; j < n; j++) {
+      int i = j - k - 1;
+      int win_min;
+      if (mq.empty()) {
+        win_min = n;
+      } else {
+        win_min = mq.min().val;
+      }
+      if (days[i] < win_min && days[j] < win_min) {
+        min_day = min(min_day, max(days[i], days[j]));
+      }
+      mq.push(Elem(days[j], j));
+      mq.pop(j - k);
+    }
+    if (min_day == n) {
+      return -1;
+    } else {
+      return min_day + 1;
+    }
+  }
+};
+
 int main(int argc, char* argv[]) {
   Solution sol;
-  //vector<int> a{1, 3, 2};
-//  vector<int> a{1, 2, 3};
-//  int k = 1;
+  // vector<int> a{1, 3, 2};
+  //  vector<int> a{1, 2, 3};
+  //  int k = 1;
 
-  vector<int> a{9,1,4,2,8,7,5,3,6,10};
+  vector<int> a{9, 1, 4, 2, 8, 7, 5, 3, 6, 10};
   int k = 3;
   cout << sol.kEmptySlots(a, k) << endl;
   return 0;

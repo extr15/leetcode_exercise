@@ -34,7 +34,7 @@ class NumArray {
  * int param_2 = obj.sumRange(i,j);
  */
 
-// AC
+// AC. BIT.
 // method 2
 class NumArray {
  public:
@@ -76,7 +76,7 @@ class NumArray {
   vector<long> bit_;
 };
 
-// AC.
+// AC. BIT.
 // method 3
 class NumArray {
  public:
