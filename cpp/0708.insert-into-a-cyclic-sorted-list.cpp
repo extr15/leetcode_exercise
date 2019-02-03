@@ -27,7 +27,6 @@ class Solution {
       return head;
     }
     Node* cur = head->next;
-    Node dummy();
     Node* prev = head;
     while (cur != head) {
       bool insert_here = false;
